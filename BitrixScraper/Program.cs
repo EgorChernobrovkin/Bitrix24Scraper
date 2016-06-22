@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using ScraperLogic;
+using ScraperLogic.Models;
+using ScraperLogic.Repository;
+using ScraperLogic.Repository.Utility;
 
 namespace BitrixScraper
 {
-    using System.Diagnostics;
-
     using WatiN.Core;
-    using WatiN.Core.Exceptions;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class Program
@@ -15,18 +16,27 @@ namespace BitrixScraper
         // ReSharper disable once InconsistentNaming
         private static void Main(string[] args)
         {
+            var tasks = new HashSet<Task>();
             using (var browser = new IE())
             {
                 var taskLinks = TaskScraper.GetAllLinks(browser);
                 foreach (var link in taskLinks)
                 {
                     var task = TaskScraper.GetTaskInfo(link, browser);
-                    Debug.WriteLine(task.Link);
-                    Debug.WriteLine(task.Id + ": " + task.Title);
-                    Debug.WriteLine(task.Status);
-                    Debug.WriteLine(task.Description);
+                    tasks.Add(task);
                 }
             }
+
+            foreach (var task in tasks)
+            {
+                if (XmlTaskDatabase.Instance.Tasks.Contains(task))
+                {
+                    XmlTaskDatabase.Instance.Tasks.Remove(task);
+                }
+
+                XmlTaskDatabase.Instance.Tasks.Add(task);
+            }
+            
         }
     }
 }

@@ -67,7 +67,12 @@
   <ItemGroup>
     <Compile Include="Models\Enums\TaskCustomStatus.cs" />
     <Compile Include="Models\Task.cs" />
+    <Compile Include="Utility\EnumerableExtensions.cs" />
+    <Compile Include="Utility\ObservableHashSetOfT.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XmlTaskDatabase.cs" />
+    <Compile Include="ScraperController.cs" />
     <Compile Include="TaskScraper.cs" />
   </ItemGroup>
   <ItemGroup>

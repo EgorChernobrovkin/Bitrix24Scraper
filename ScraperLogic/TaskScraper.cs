@@ -144,13 +144,17 @@
         private static void LoadTasksPage(DomContainer browser)
         {
             // Ищем кнопку "Задачи"
-            var tasksLink = browser.Links.FirstOrDefault(link =>
-                link.ClassName.Contains("menu-item-link")
-                && link.Children().FirstOrDefault(element =>
-                    element != null
-                    && !string.IsNullOrEmpty(element.Text)
-                    && element.Text.Contains("Задачи"))
-                != null);
+            Link tasksLink;
+            do
+            {
+                browser.WaitForComplete();
+                tasksLink = browser.Links.FirstOrDefault(link =>
+                    link.ClassName != null
+                    && link.ClassName.Contains("menu-item-link")
+                    && link.Children().FirstOrDefault(element =>
+                        !string.IsNullOrEmpty(element?.Text) && element.Text.Contains("Задачи"))
+                    != null);
+            } while (tasksLink == null);
             Debug.Assert(tasksLink != null, "Кнопка Задачи не найдена");
             tasksLink.Click();
             browser.WaitForComplete();
@@ -167,10 +171,8 @@
         {
             var sectionLink = browser.Links.FirstOrDefault(link =>
                 link.ClassName.Contains("tasks-top-item")
-                && link.Children().FirstOrDefault(elem =>
-                    elem != null
-                    && elem.Text != null
-                    && elem.Text == buttonText) != null);
+                && link.Children().FirstOrDefault(elem => elem?.Text != null && elem.Text == buttonText)
+                != null);
             Debug.Assert(sectionLink != null, "Кнопка " + buttonText + " не найдена");
             sectionLink.Click();
             browser.WaitForComplete();

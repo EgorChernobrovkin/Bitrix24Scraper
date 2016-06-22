@@ -1,12 +1,29 @@
 ﻿namespace ScraperLogic.Models
 {
-    using ScraperLogic.Models.Enums;
-
+    using Enums;
+    
     /// <summary>
     /// Информация о задаче
     /// </summary>
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class Task
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
+        public Task()
+        {
+            
+        }
+
+        public Task(Task task)
+        {
+            Id = task.Id;
+            Link = task.Link;
+            Title = task.Title;
+            Description = task.Description;
+            Status = task.Status;
+            CustomStatus = task.CustomStatus;
+        }
+
         /// <summary>
         /// Номер задачи
         /// </summary>
@@ -36,5 +53,15 @@
         /// Кастомный статус для задачи
         /// </summary>
         public TaskCustomStatus CustomStatus { get; set; } = TaskCustomStatus.NotSet;
+
+        public override bool Equals(object obj)
+        {
+            var task = obj as Task;
+            if (task != null)
+            {
+                return Id == task.Id;
+            }
+            return obj.Equals(this);
+        }
     }
 }
