@@ -3,8 +3,13 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading;
+
+    using ScraperLogic.Models;
+
     using WatiN.Core;
+    using WatiN.Core.Exceptions;
 
     /// <summary>
     /// Собирает информацию о задачах из Битрикс24
@@ -17,26 +22,75 @@
         private const int PageloadTimeout = 2000;
 
         /// <summary>
-        /// Собрать всю информацию о задачах
+        /// Собрать список ссылок на все задачи
         /// </summary>
-        public static void Scrape()
+        /// <param name="browser">Браузер, в котором выполняется анализ</param>
+        /// <returns>Список ссылок на страницы с задачами</returns>
+        public static HashSet<string> GetAllLinks(Browser browser)
         {
-            using (var browser = new IE("https://tns.bitrix24.ru/") { AutoClose = true })
-            {
-                // Ждем загрузки главной страницы и переходим на страницу с задачами
-                browser.WaitForComplete();
-                Thread.Sleep(PageloadTimeout);
-                LoadTasksPage(browser);
+            browser.GoTo("https://tns.bitrix24.ru/");
+            browser.WaitForComplete();
+            
+            // Ждем загрузки главной страницы и переходим на страницу с задачами
+            browser.WaitForComplete();
+            Thread.Sleep(PageloadTimeout);
+            LoadTasksPage(browser);
 
-                var taskLinks = CollectTaskLinks(browser);
-                
-#if DEBUG
-                foreach (var link in taskLinks)
-                {
-                    Debug.WriteLine(link);
-                }
-#endif
+            var taskLinks = CollectTaskLinks(browser);
+
+            return taskLinks;
+        }
+
+        /// <summary>
+        /// Получить информацию о задаче
+        /// </summary>
+        /// <param name="link">Ссылка на задачу</param>
+        /// <param name="browser">Браузер, в котором выполняется анализ</param>
+        /// <returns>Объект с информацией о задаче</returns>
+        public static Task GetTaskInfo(string link, Browser browser)
+        {
+            browser.GoTo(link);
+            browser.WaitForComplete();
+            Thread.Sleep(PageloadTimeout);
+
+            var titleSpan = browser.Span(Find.ByClass("pagetitle-inner"));
+            Debug.Assert(titleSpan != null, "Не найден заголовок задачи");
+
+            var titleRegex = new Regex(@"^(?<title>.+) \(задача №(?<id>\d+)\)$");
+            var match = titleRegex.Match(titleSpan.Text);
+            Debug.Assert(match.Success, "Не удалось распарсить заголовок");
+
+            int id;
+            var parseResult = int.TryParse(match.Groups["id"].Value, out id);
+            Debug.Assert(parseResult, "Не удалось распарсить номер задачи");
+            var title = match.Groups["title"].Value;
+
+            var descriptionDiv = browser.Div(Find.ById("task-detail-description"));
+            Debug.Assert(descriptionDiv != null, "Не найдено описание задачи");
+            string descriptionHtml;
+            try
+            {
+                descriptionHtml = descriptionDiv.InnerHtml;
             }
+            catch (ElementNotFoundException)
+            {
+                descriptionHtml = string.Empty;
+            }
+
+            var statusSpan = browser.Span(Find.ById("task-detail-status-name"));
+            Debug.Assert(statusSpan != null, "Не удалось найти статус");
+            var status = statusSpan.Text;
+
+            var task = new Task
+            {
+                Link = link,
+                Id = id,
+                Title = title,
+                Description = descriptionHtml,
+                Status = status
+            };
+
+            return task;
         }
         
         /// <summary>
