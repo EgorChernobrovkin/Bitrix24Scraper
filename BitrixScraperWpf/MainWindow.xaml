@@ -7,9 +7,14 @@
         xmlns:models="clr-namespace:ScraperLogic.Models;assembly=ScraperLogic"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance scraperLogic:ScraperController}"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525"
+        FontFamily="sans-serif">
     <Grid>
-        <ListView ItemsSource="{Binding Tasks}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ListView ItemsSource="{Binding Tasks}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseDoubleClick="TasksListView_DoubleClick">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="models:Task">
                     <Border Padding="5" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black">
@@ -38,5 +43,11 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
+        
+        <Border Grid.Row="1" Padding="10">
+            <StackPanel Orientation="Horizontal">
+                <Button Click="RefreshButton_Click">Обновить данные</Button>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
