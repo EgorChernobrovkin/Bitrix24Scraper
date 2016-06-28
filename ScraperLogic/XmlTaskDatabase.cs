@@ -1,8 +1,5 @@
-﻿using BellaCode.Collections.ObjectModel;
-
-namespace ScraperLogic.Repository.Utility
+﻿namespace ScraperLogic
 {
-    
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -10,7 +7,7 @@ namespace ScraperLogic.Repository.Utility
     using System.Threading;
     using System.Xml.Serialization;
 
-    using Models;
+    using ScraperLogic.Models;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     public class XmlTaskDatabase
@@ -20,29 +17,36 @@ namespace ScraperLogic.Repository.Utility
         // ReSharper disable once InconsistentNaming
         private static readonly Lazy<XmlTaskDatabase> _instance= new Lazy<XmlTaskDatabase>(() => new XmlTaskDatabase(), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        public static XmlTaskDatabase Instance => _instance.Value;
+        public static XmlTaskDatabase Instance
+        {
+            get
+            {
+                return _instance.Value;
+            }
+        }
 
-        public ObservableHashSet<Task> Tasks { get; }
+        public HashSet<Task> Tasks { get; private set; }
 
         private XmlTaskDatabase()
         {
             if (!File.Exists(SaveFileName))
             {
-                Tasks = new ObservableHashSet<Task>();
+                this.Tasks = new HashSet<Task>();
             }
             else
             {
                 using (var dbStream = new FileStream(SaveFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var dbReader = new StreamReader(dbStream, Encoding.UTF8);
-                    var xmlSerializer = new XmlSerializer(typeof (ObservableHashSet<Task>));
+                    var xmlSerializer = new XmlSerializer(typeof (HashSet<Task>));
+
                     try
                     {
-                        Tasks = (ObservableHashSet<Task>) xmlSerializer.Deserialize(dbReader);
+                        this.Tasks = (HashSet<Task>) xmlSerializer.Deserialize(dbReader);
                     }
                     catch
                     {
-                        Tasks = new ObservableHashSet<Task>();
+                        this.Tasks = new HashSet<Task>();
                     }
                 }
             }
@@ -52,9 +56,9 @@ namespace ScraperLogic.Repository.Utility
         {
             using (var dbStream = new FileStream(SaveFileName, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                var tasks = new ObservableHashSet<Task>(Tasks);
+                var tasks = new HashSet<Task>(this.Tasks);
                 var dbWriter = new StreamWriter(dbStream, Encoding.UTF8);
-                var xmlSerializer = new XmlSerializer(typeof(ObservableHashSet<Task>));
+                var xmlSerializer = new XmlSerializer(typeof(HashSet<Task>));
                 xmlSerializer.Serialize(dbWriter, tasks);
             }
         }

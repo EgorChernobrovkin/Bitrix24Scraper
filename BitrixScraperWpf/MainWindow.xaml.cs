@@ -1,22 +1,25 @@
-﻿using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
-using ScraperLogic;
-using WatiN.Core;
-using Task = ScraperLogic.Models.Task;
+﻿
 
 namespace BitrixScraperWpf
 {
-    using System;
+    using System.ComponentModel;
+    using System.Diagnostics;
     using System.Windows;
-    using ScraperLogic.Repository;
+    using System.Windows.Controls;
+    using System.Windows.Input;
+
+    using ObjectDumper;
+
+    using ScraperLogic;
+    using WatiN.Core;
+    using Task = ScraperLogic.Models.Task;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ScraperController _controller;
+        private readonly ScraperController _controller;
 
         public MainWindow(ScraperController controller)
         {
@@ -28,10 +31,17 @@ namespace BitrixScraperWpf
         private void TasksListView_DoubleClick(object sender, MouseButtonEventArgs e)
         {
             var taskListView = sender as ListView;
-            var task = taskListView?.SelectedItem as Task;
+            if (taskListView == null)
+            {
+                return;
+            }
+
+            var task = taskListView.SelectedItem as Task;
+
             if (task != null)
             {
-                
+                var window = new TaskInfoWindow(task) {Owner = this};
+                window.ShowDialog();
             }
         }
 
@@ -44,6 +54,16 @@ namespace BitrixScraperWpf
             }
 
             IsEnabled = true;
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            XmlTaskDatabase.Instance.Save();
+        }
+
+        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            XmlTaskDatabase.Instance.Save();
         }
     }
 }

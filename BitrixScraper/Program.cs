@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using ScraperLogic;
 using ScraperLogic.Models;
-using ScraperLogic.Repository;
-using ScraperLogic.Repository.Utility;
 
 namespace BitrixScraper
 {
@@ -36,7 +34,6 @@ namespace BitrixScraper
 
                 XmlTaskDatabase.Instance.Tasks.Add(task);
             }
-            
         }
     }
 }

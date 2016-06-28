@@ -4,43 +4,68 @@ using System.Runtime.CompilerServices;
 using BellaCode.Collections.ObjectModel;
 using ScraperLogic.Annotations;
 using ScraperLogic.Models;
-using ScraperLogic.Repository;
-using ScraperLogic.Repository.Utility;
+
 using WatiN.Core;
 
 namespace ScraperLogic
 {
-    public class ScraperController : INotifyPropertyChanged
+    using System.Linq;
+    using System.Windows.Data;
+
+    public sealed class ScraperController : INotifyPropertyChanged
     {
-        public ObservableHashSet<Task> Tasks;
+        private ObservableHashSet<Task> tasks;
+
+        public ICollectionView Tasks
+        {
+            get
+            {
+                var t = CollectionViewSource.GetDefaultView(this.tasks);
+                t.SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
+                return t;
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ScraperController()
         {
-            Tasks = new ObservableHashSet<Task>(XmlTaskDatabase.Instance.Tasks);
+            this.tasks = new ObservableHashSet<Task>(XmlTaskDatabase.Instance.Tasks);
+            this.OnPropertyChanged("Tasks");
         }
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (this.PropertyChanged != null)
+            {
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         public void RefreshTasks(Browser browser)
         {
-            var tasks = new HashSet<Task>();
+            var taskSet = new HashSet<Task>();
             
             var taskLinks = TaskScraper.GetAllLinks(browser);
+
             foreach (var link in taskLinks)
             {
-                var task = TaskScraper.GetTaskInfo(link, browser);
-                tasks.Add(task);
+                var task = XmlTaskDatabase.Instance.Tasks.FirstOrDefault(t => string.Equals(t.Link, link));
+                
+                if (task == null)
+                {
+                    task = TaskScraper.GetTaskInfo(link, browser);
+                }
+                else
+                {
+                    TaskScraper.UpdateTaskInfo(task, browser);
+                }
+
+                taskSet.Add(task);
             }
-
-            browser.Dispose();
-
-            foreach (var task in tasks)
+            
+            foreach (var task in taskSet)
             {
                 if (XmlTaskDatabase.Instance.Tasks.Contains(task))
                 {
@@ -51,6 +76,9 @@ namespace ScraperLogic
             }
 
             XmlTaskDatabase.Instance.Save();
+
+            this.tasks = new ObservableHashSet<Task>(XmlTaskDatabase.Instance.Tasks);
+            this.OnPropertyChanged("Tasks");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace ScraperLogic
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -7,6 +8,7 @@
     using System.Threading;
 
     using ScraperLogic.Models;
+    using ScraperLogic.Models.Enums;
 
     using WatiN.Core;
     using WatiN.Core.Exceptions;
@@ -49,6 +51,26 @@
         /// <returns>Объект с информацией о задаче</returns>
         public static Task GetTaskInfo(string link, Browser browser)
         {
+            var task = new Task
+            {
+                Link = link,
+                CustomStatus = TaskCustomStatus.NotSet
+            };
+
+            UpdateTaskInfo(task, browser);
+
+            return task;
+        }
+
+        /// <summary>
+        /// Обновить информацию о задаче
+        /// </summary>
+        /// <param name="task">Задача для обновления</param>
+        /// <param name="browser">Браузер, в котором выполняется анализ</param>
+        public static void UpdateTaskInfo(Task task, Browser browser)
+        {
+            var link = task.Link;
+
             browser.GoTo(link);
             browser.WaitForComplete();
             Thread.Sleep(PageloadTimeout);
@@ -81,18 +103,12 @@
             Debug.Assert(statusSpan != null, "Не удалось найти статус");
             var status = statusSpan.Text;
 
-            var task = new Task
-            {
-                Link = link,
-                Id = id,
-                Title = title,
-                Description = descriptionHtml,
-                Status = status
-            };
-
-            return task;
+            task.Id = id;
+            task.Title = title;
+            task.Description = descriptionHtml;
+            task.Status = status;
         }
-        
+
         /// <summary>
         /// Собирает все ссылки на задачи со всех разделов
         /// </summary>
@@ -152,7 +168,9 @@
                     link.ClassName != null
                     && link.ClassName.Contains("menu-item-link")
                     && link.Children().FirstOrDefault(element =>
-                        !string.IsNullOrEmpty(element?.Text) && element.Text.Contains("Задачи"))
+                        element != null 
+                        && !string.IsNullOrEmpty(element.Text)
+                        && element.Text.Contains("Задачи"))
                     != null);
             } while (tasksLink == null);
             Debug.Assert(tasksLink != null, "Кнопка Задачи не найдена");
@@ -171,7 +189,10 @@
         {
             var sectionLink = browser.Links.FirstOrDefault(link =>
                 link.ClassName.Contains("tasks-top-item")
-                && link.Children().FirstOrDefault(elem => elem?.Text != null && elem.Text == buttonText)
+                && link.Children().FirstOrDefault(elem => 
+                    elem != null
+                    && elem.Text != null
+                    && elem.Text == buttonText)
                 != null);
             Debug.Assert(sectionLink != null, "Кнопка " + buttonText + " не найдена");
             sectionLink.Click();

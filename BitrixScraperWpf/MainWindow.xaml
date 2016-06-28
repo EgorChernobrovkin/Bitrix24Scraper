@@ -1,38 +1,63 @@
 ﻿<Window x:Class="BitrixScraperWpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:BitrixScraperWpf.Converters"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:scraperLogic="clr-namespace:ScraperLogic;assembly=ScraperLogic"
         xmlns:models="clr-namespace:ScraperLogic.Models;assembly=ScraperLogic"
-        mc:Ignorable="d"
+        xmlns:scraperLogic="clr-namespace:ScraperLogic;assembly=ScraperLogic"
+        Title="MainWindow"
+        Width="486"
+        Height="796"
         d:DataContext="{d:DesignInstance scraperLogic:ScraperController}"
-        Title="MainWindow" Height="350" Width="525"
-        FontFamily="sans-serif">
+        Closing="MainWindow_OnClosing"
+        FontFamily="sans-serif"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d">
+    <Window.Resources>
+        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListView ItemsSource="{Binding Tasks}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseDoubleClick="TasksListView_DoubleClick">
+        <ListView ItemsSource="{Binding Tasks}"
+                  MouseDoubleClick="TasksListView_DoubleClick"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="models:Task">
-                    <Border Padding="5" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black">
+                    <Border HorizontalAlignment="Stretch"
+                            BorderBrush="Black"
+                            BorderThickness="1"
+                            Padding="5">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
-                            
+
                             <TextBlock Text="{Binding Id}" />
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Status}" FontSize="10" />
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CustomStatus}" FontSize="10"></TextBlock>
-                            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding Title}"></TextBlock>
+                            <TextBlock Grid.Row="0"
+                                       Grid.Column="1"
+                                       FontSize="10"
+                                       Text="{Binding Status}" />
+                            <TextBlock Grid.Row="1"
+                                       Grid.Column="1"
+                                       FontSize="10"
+                                       Text="{Binding CustomStatus,
+                                                      Converter={StaticResource EnumDescriptionConverter}}" />
+                            <TextBlock Grid.Row="2"
+                                       Grid.Column="0"
+                                       Grid.ColumnSpan="2"
+                                       HorizontalAlignment="Stretch"
+                                       Text="{Binding Title}"
+                                       TextWrapping="Wrap" />
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -43,10 +68,15 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        
+
         <Border Grid.Row="1" Padding="10">
             <StackPanel Orientation="Horizontal">
-                <Button Click="RefreshButton_Click">Обновить данные</Button>
+                <Button Margin="0,0,10,0"
+                        Click="RefreshButton_Click"
+                        Padding="3">
+                    Обновить данные
+                </Button>
+                <Button Click="SaveButton_Click" Padding="3">Сохранить</Button>
             </StackPanel>
         </Border>
     </Grid>

@@ -35,6 +35,18 @@
         /// На тестировании
         /// </summary>
         [Description("На тестировании")]
-        OnTesting
+        OnTesting,
+
+        /// <summary>
+        /// Ждет выпуска в обновлении
+        /// </summary>
+        [Description("Ждет выпуска")]
+        WaitingForRelease,
+
+        /// <summary>
+        /// Задача завершена
+        /// </summary>
+        [Description("Завершена")]
+        Finished
     }
 }
