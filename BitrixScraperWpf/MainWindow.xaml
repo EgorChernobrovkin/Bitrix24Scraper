@@ -7,22 +7,35 @@
         xmlns:models="clr-namespace:ScraperLogic.Models;assembly=ScraperLogic"
         xmlns:scraperLogic="clr-namespace:ScraperLogic;assembly=ScraperLogic"
         Title="MainWindow"
-        Width="486"
-        Height="796"
+        Width="800"
+        Height="600"
+        MinWidth="450"
+        MinHeight="500"
         d:DataContext="{d:DesignInstance scraperLogic:ScraperController}"
         Closing="MainWindow_OnClosing"
         FontFamily="sans-serif"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
     <Window.Resources>
-        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/GlobalStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+        </ResourceDictionary>
     </Window.Resources>
+
+    <Window.Style>
+        <StaticResource ResourceKey="WindowStyle" />
+    </Window.Style>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListView ItemsSource="{Binding Tasks}"
+        <ListView Margin="10,10,10,0"
+                  ItemsSource="{Binding Tasks}"
                   MouseDoubleClick="TasksListView_DoubleClick"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemTemplate>
