@@ -32,7 +32,7 @@
         </ResourceDictionary>
     </Window.Resources>
     <Window.Style>
-        <StaticResource ResourceKey="WindowStyle"></StaticResource>
+        <StaticResource ResourceKey="WindowStyle" />
     </Window.Style>
 
     <Grid>
@@ -94,7 +94,7 @@
 
         <Border Grid.Row="2"
                 Margin="10,10,10,0"
-                BorderBrush="Gray"
+                BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1">
             <wpf:HtmlPanel Text="{Binding Description}" />
         </Border>

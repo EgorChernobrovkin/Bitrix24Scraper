@@ -34,53 +34,60 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListView Margin="10,10,10,0"
-                  ItemsSource="{Binding Tasks}"
-                  MouseDoubleClick="TasksListView_DoubleClick"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListView.ItemTemplate>
-                <DataTemplate DataType="models:Task">
-                    <Border HorizontalAlignment="Stretch"
-                            BorderBrush="Black"
-                            BorderThickness="1"
-                            Padding="5">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="100" />
-                            </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="{Binding Id}" />
-                            <TextBlock Grid.Row="0"
-                                       Grid.Column="1"
-                                       FontSize="10"
-                                       Text="{Binding Status}" />
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="1"
-                                       FontSize="10"
-                                       Text="{Binding CustomStatus,
-                                                      Converter={StaticResource EnumDescriptionConverter}}" />
-                            <TextBlock Grid.Row="2"
-                                       Grid.Column="0"
-                                       Grid.ColumnSpan="2"
-                                       HorizontalAlignment="Stretch"
-                                       Text="{Binding Title}"
-                                       TextWrapping="Wrap" />
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+        <Border Margin="10,10,10,0"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0">
+            <ListView BorderBrush="{StaticResource BorderBrush}"
+                      BorderThickness="1"
+                      ItemsSource="{Binding Tasks}"
+                      MouseDoubleClick="TasksListView_DoubleClick"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="models:Task">
+                        <Border HorizontalAlignment="Stretch"
+                                BorderBrush="Black"
+                                BorderThickness="1"
+                                Padding="5">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding Id}" />
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="1"
+                                           FontSize="10"
+                                           Text="{Binding Status}" />
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="1"
+                                           FontSize="10"
+                                           Text="{Binding CustomStatus,
+                                                          Converter={StaticResource EnumDescriptionConverter}}" />
+                                <TextBlock Grid.Row="2"
+                                           Grid.Column="0"
+                                           Grid.ColumnSpan="2"
+                                           HorizontalAlignment="Stretch"
+                                           Text="{Binding Title}"
+                                           TextWrapping="Wrap" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Border>
 
         <Border Grid.Row="1" Padding="10">
             <StackPanel Orientation="Horizontal">
@@ -89,7 +96,7 @@
                         Padding="3">
                     Обновить данные
                 </Button>
-                <Button Click="SaveButton_Click" Padding="3">Сохранить</Button>
+                <Button Click="SaveButton_Click">Сохранить</Button>
             </StackPanel>
         </Border>
     </Grid>
