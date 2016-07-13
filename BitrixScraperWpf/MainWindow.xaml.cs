@@ -1,19 +1,15 @@
-﻿
+﻿using System.Windows.Data;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+using ScraperLogic;
+using WatiN.Core;
+using Task = ScraperLogic.Models.Task;
 
 namespace BitrixScraperWpf
 {
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-
-    using ObjectDumper;
-
-    using ScraperLogic;
-    using WatiN.Core;
-    using Task = ScraperLogic.Models.Task;
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -61,9 +57,48 @@ namespace BitrixScraperWpf
             XmlTaskDatabase.Instance.Save();
         }
 
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource)
+                .SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
+        }
+
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
             XmlTaskDatabase.Instance.Save();
+        }
+        
+        private void DeleteItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            if (menuItem == null)
+            {
+                return;
+            }
+
+            var task = menuItem.DataContext as Task;
+            if (task == null)
+            {
+                return;
+            }
+
+            var dialogResult = MessageBox.Show(
+                "Удалить задачу из списка?",
+                "Предупреждение",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (dialogResult != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            this._controller.DeleteTask(task);
+        }
+
+        private void SortButton_Click(object sender, RoutedEventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource).Refresh();
         }
     }
 }

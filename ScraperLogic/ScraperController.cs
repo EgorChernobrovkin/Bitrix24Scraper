@@ -14,23 +14,13 @@ namespace ScraperLogic
 
     public sealed class ScraperController : INotifyPropertyChanged
     {
-        private ObservableHashSet<Task> tasks;
-
-        public ICollectionView Tasks
-        {
-            get
-            {
-                var t = CollectionViewSource.GetDefaultView(this.tasks);
-                t.SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
-                return t;
-            }
-        }
+        public ObservableHashSet<Task> Tasks { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ScraperController()
         {
-            this.tasks = new ObservableHashSet<Task>(XmlTaskDatabase.Instance.Tasks);
+            this.Tasks = new ObservableHashSet<Task>(XmlTaskDatabase.Instance.Tasks);
             this.OnPropertyChanged("Tasks");
         }
 
@@ -77,8 +67,19 @@ namespace ScraperLogic
 
             XmlTaskDatabase.Instance.Save();
 
-            this.tasks = new ObservableHashSet<Task>(XmlTaskDatabase.Instance.Tasks);
+            this.Tasks = new ObservableHashSet<Task>(XmlTaskDatabase.Instance.Tasks);
             this.OnPropertyChanged("Tasks");
+        }
+
+        public bool DeleteTask(Task task)
+        {
+            var result = XmlTaskDatabase.Instance.Tasks.Remove(task);
+            XmlTaskDatabase.Instance.Save();
+
+            this.Tasks = new ObservableHashSet<Task>(XmlTaskDatabase.Instance.Tasks);
+            this.OnPropertyChanged("Tasks");
+
+            return result;
         }
     }
 }

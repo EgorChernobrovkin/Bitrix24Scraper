@@ -14,6 +14,7 @@
         d:DataContext="{d:DesignInstance scraperLogic:ScraperController}"
         Closing="MainWindow_OnClosing"
         FontFamily="sans-serif"
+        Loaded="MainWindow_OnLoaded"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
     <Window.Resources>
@@ -38,12 +39,12 @@
         <Border Margin="10,10,10,0"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="0">
-            <ListView BorderBrush="{StaticResource BorderBrush}"
+            <ListView x:Name="TasksListView"
+                      BorderBrush="{StaticResource BorderBrush}"
                       BorderThickness="1"
                       ItemsSource="{Binding Tasks}"
                       MouseDoubleClick="TasksListView_DoubleClick"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
                 <ListView.ItemTemplate>
                     <DataTemplate DataType="models:Task">
                         <Border HorizontalAlignment="Stretch"
@@ -82,8 +83,22 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
+                    <Style TargetType="{x:Type ListViewItem}">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu>
+                                    <MenuItem Header="Удалить">
+                                        <MenuItem.Style>
+                                            <Style TargetType="{x:Type MenuItem}">
+                                                <EventSetter Event="Click" Handler="DeleteItem_OnClick" />
+                                            </Style>
+                                        </MenuItem.Style>
+                                    </MenuItem>
+
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
@@ -91,9 +106,8 @@
 
         <Border Grid.Row="1" Padding="10">
             <StackPanel Orientation="Horizontal">
-                <Button Margin="0,0,10,0"
-                        Click="RefreshButton_Click"
-                        Padding="3">
+                <Button Margin="0,0,10,0" Click="SortButton_Click">Отсортировать</Button>
+                <Button Margin="0,0,10,0" Click="RefreshButton_Click">
                     Обновить данные
                 </Button>
                 <Button Click="SaveButton_Click">Сохранить</Button>
