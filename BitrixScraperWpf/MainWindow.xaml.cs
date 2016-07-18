@@ -1,4 +1,5 @@
-﻿using System.Windows.Data;
+﻿using System;
+using System.Windows.Data;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,6 +51,12 @@ namespace BitrixScraperWpf
             }
 
             IsEnabled = true;
+            this.Dispatcher.Invoke(() =>
+                {
+                    CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource)
+                        .SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
+                    CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource).Refresh();
+                });
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -61,6 +68,7 @@ namespace BitrixScraperWpf
         {
             CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource)
                 .SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
+            CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource).Refresh();
         }
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
@@ -94,6 +102,12 @@ namespace BitrixScraperWpf
             }
 
             this._controller.DeleteTask(task);
+            this.Dispatcher.Invoke(() =>
+            {
+                CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource)
+                    .SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
+                CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource).Refresh();
+            });
         }
 
         private void SortButton_Click(object sender, RoutedEventArgs e)
