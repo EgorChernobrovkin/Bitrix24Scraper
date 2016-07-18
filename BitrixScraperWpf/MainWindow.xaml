@@ -23,6 +23,30 @@
                 <ResourceDictionary Source="Themes/GlobalStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+            <Style x:Key="StatusColorBorder" TargetType="{x:Type Border}">
+                <Setter Property="Background" Value="Transparent" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding CustomStatus}" Value="Doing">
+                        <Setter Property="Background" Value="Green" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding CustomStatus}" Value="Watching">
+                        <Setter Property="Background" Value="CornflowerBlue" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding CustomStatus}" Value="Suspended">
+                        <Setter Property="Background" Value="Yellow" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding CustomStatus}" Value="OnTesting">
+                        <Setter Property="Background" Value="SandyBrown" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding CustomStatus}" Value="WaitingForRelease">
+                        <Setter Property="Background" Value="BlueViolet" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding CustomStatus}" Value="Finished">
+                        <Setter Property="Background" Value="DarkGray" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
         </ResourceDictionary>
     </Window.Resources>
 
@@ -60,6 +84,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="10" />
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Text="{Binding Id}" />
@@ -67,6 +92,10 @@
                                            Grid.Column="1"
                                            FontSize="10"
                                            Text="{Binding Status}" />
+                                <Border Grid.Row="0"
+                                        Grid.RowSpan="3"
+                                        Grid.Column="2"
+                                        Style="{StaticResource StatusColorBorder}" />
                                 <TextBlock Grid.Row="1"
                                            Grid.Column="1"
                                            FontSize="10"
