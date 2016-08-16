@@ -6,7 +6,7 @@
         <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
     </Style>
 
-    <Style TargetType="{x:Type Button}">
+    <!-- <Style TargetType="{x:Type Button}">
         <Setter Property="Padding" Value="3" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -36,5 +36,5 @@
                 <Setter Property="Background" Value="#CADDF4" />
             </Trigger>
         </Style.Triggers>
-    </Style>
+    </Style>-->
 </ResourceDictionary>

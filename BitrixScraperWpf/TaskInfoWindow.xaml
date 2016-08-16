@@ -12,6 +12,9 @@
         Width="800"
         Height="600"
         d:DataContext="{d:DesignInstance models:Task}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
     <Window.Resources>
