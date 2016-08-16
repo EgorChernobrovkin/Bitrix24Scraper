@@ -8,8 +8,8 @@
         xmlns:models="clr-namespace:ScraperLogic.Models;assembly=ScraperLogic"
         xmlns:scraperLogic="clr-namespace:ScraperLogic;assembly=ScraperLogic"
         Title="MainWindow"
-        Width="800"
-        Height="600"
+        Width="900"
+        Height="800"
         MinWidth="450"
         MinHeight="500"
         d:DataContext="{d:DesignInstance scraperLogic:ScraperController}"
@@ -63,116 +63,83 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        
+        <ListView x:Name="TasksListView"
+                  ItemsSource="{Binding Tasks}"
+                  MouseDoubleClick="TasksListView_DoubleClick"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  SelectionMode="Single">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <materialDesign:Card Width="230"
+                                         Height="250"
+                                         Margin="4"
+                                         VerticalAlignment="Stretch"
+                                         Padding="4">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="10" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Margin="0 0 0 4"
+                                       FontFamily="sans-serif"
+                                       FontSize="14"
+                                       Foreground="#666666"
+                                       Text="{Binding Id}" />
+                            <TextBlock Grid.Row="1"
+                                       HorizontalAlignment="Stretch"
+                                       FontFamily="sans-serif"
+                                       FontSize="16"
+                                       Foreground="#333333"
+                                       Text="{Binding Title}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="2"
+                                       Margin="0 4 0 0"
+                                       FontFamily="sans-serif"
+                                       FontSize="12"
+                                       Foreground="#666666"
+                                       Text="{Binding Status}"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Grid.Row="3"
+                                       Margin="0 4 0 0"
+                                       FontFamily="sans-serif"
+                                       FontSize="12"
+                                       Foreground="#666666"
+                                       Text="{Binding CustomStatus,
+                                                      Converter={StaticResource EnumDescriptionConverter}}" />
+                            <Border Grid.Row="4"
+                                    Margin="0 4 0 0"
+                                    Style="{StaticResource StatusColorBorder}" />
+                        </Grid>
+                    </materialDesign:Card>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu>
+                                <MenuItem Header="Удалить">
+                                    <MenuItem.Style>
+                                        <Style TargetType="{x:Type MenuItem}">
+                                            <EventSetter Event="Click" Handler="DeleteItem_OnClick" />
+                                        </Style>
+                                    </MenuItem.Style>
+                                </MenuItem>
 
-        <Border Margin="10,10,10,0"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="0">
-            <ListView x:Name="TasksListView"
-                      BorderBrush="{StaticResource BorderBrush}"
-                      Background="Transparent"
-                      BorderThickness="0"
-                      ItemsSource="{Binding Tasks}"
-                      MouseDoubleClick="TasksListView_DoubleClick"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ListView.ItemTemplate>
-                    <DataTemplate DataType="models:Task">
-                        <materialDesign:Card Margin="3" Padding="10">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="10" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Text="{Binding Id}" />
-                                <TextBlock Grid.Row="0"
-                                           Grid.Column="1"
-                                           FontSize="10"
-                                           Text="{Binding Status}" />
-                                <Border Grid.Row="0"
-                                        Grid.RowSpan="3"
-                                        Grid.Column="2"
-                                        Style="{StaticResource StatusColorBorder}" />
-                                <TextBlock Grid.Row="1"
-                                           Grid.Column="1"
-                                           FontSize="10"
-                                           Text="{Binding CustomStatus,
-                                                          Converter={StaticResource EnumDescriptionConverter}}" />
-                                <TextBlock Grid.Row="2"
-                                           Grid.Column="0"
-                                           Grid.ColumnSpan="2"
-                                           HorizontalAlignment="Stretch"
-                                           Text="{Binding Title}"
-                                           TextWrapping="Wrap" />
-                            </Grid>
-                        </materialDesign:Card>
-                        <!-- <Border HorizontalAlignment="Stretch"
-                                BorderBrush="Black"
-                                BorderThickness="1"
-                                Padding="5">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="10" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Text="{Binding Id}" />
-                                <TextBlock Grid.Row="0"
-                                           Grid.Column="1"
-                                           FontSize="10"
-                                           Text="{Binding Status}" />
-                                <Border Grid.Row="0"
-                                        Grid.RowSpan="3"
-                                        Grid.Column="2"
-                                        Style="{StaticResource StatusColorBorder}" />
-                                <TextBlock Grid.Row="1"
-                                           Grid.Column="1"
-                                           FontSize="10"
-                                           Text="{Binding CustomStatus,
-                                                          Converter={StaticResource EnumDescriptionConverter}}" />
-                                <TextBlock Grid.Row="2"
-                                           Grid.Column="0"
-                                           Grid.ColumnSpan="2"
-                                           HorizontalAlignment="Stretch"
-                                           Text="{Binding Title}"
-                                           TextWrapping="Wrap" />
-                            </Grid>
-                        </Border>-->
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="ContextMenu">
-                            <Setter.Value>
-                                <ContextMenu>
-                                    <MenuItem Header="Удалить">
-                                        <MenuItem.Style>
-                                            <Style TargetType="{x:Type MenuItem}">
-                                                <EventSetter Event="Click" Handler="DeleteItem_OnClick" />
-                                            </Style>
-                                        </MenuItem.Style>
-                                    </MenuItem>
-
-                                </ContextMenu>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
-        </Border>
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
 
         <Border Grid.Row="1" Padding="10">
             <StackPanel Orientation="Horizontal">

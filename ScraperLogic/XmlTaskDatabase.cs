@@ -14,6 +14,10 @@
     {
         private const string SaveFileName = "tasksdb.xml";
 
+        private string saveFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "BitrixScraper/");
+
         // ReSharper disable once InconsistentNaming
         private static readonly Lazy<XmlTaskDatabase> _instance= new Lazy<XmlTaskDatabase>(() => new XmlTaskDatabase(), LazyThreadSafetyMode.ExecutionAndPublication);
 
@@ -29,13 +33,19 @@
 
         private XmlTaskDatabase()
         {
-            if (!File.Exists(SaveFileName))
+            var savePath = Path.Combine(this.saveFolder, SaveFileName);
+            if (!File.Exists(savePath))
             {
                 this.Tasks = new HashSet<Task>();
             }
             else
             {
-                using (var dbStream = new FileStream(SaveFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                if (!Directory.Exists(this.saveFolder))
+                {
+                    Directory.CreateDirectory(this.saveFolder);
+                }
+                
+                using (var dbStream = new FileStream(savePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var dbReader = new StreamReader(dbStream, Encoding.UTF8);
                     var xmlSerializer = new XmlSerializer(typeof (HashSet<Task>));
@@ -54,7 +64,13 @@
 
         public void Save()
         {
-            using (var dbStream = new FileStream(SaveFileName, FileMode.Create, FileAccess.Write, FileShare.None))
+            if (!Directory.Exists(this.saveFolder))
+            {
+                Directory.CreateDirectory(this.saveFolder);
+            }
+
+            var savePath = Path.Combine(this.saveFolder, SaveFileName);
+            using (var dbStream = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 var tasks = new HashSet<Task>(this.Tasks);
                 var dbWriter = new StreamWriter(dbStream, Encoding.UTF8);
