@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:models="clr-namespace:ScraperLogic.Models;assembly=ScraperLogic"
         xmlns:scraperLogic="clr-namespace:ScraperLogic;assembly=ScraperLogic"
-        Title="MainWindow"
+        Title="SuperMainWindow"
         Width="900"
         Height="800"
         MinWidth="450"

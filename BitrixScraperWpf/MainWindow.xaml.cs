@@ -51,12 +51,7 @@ namespace BitrixScraperWpf
             }
 
             IsEnabled = true;
-            this.Dispatcher.Invoke(() =>
-                {
-                    CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource)
-                        .SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
-                    CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource).Refresh();
-                });
+            this.Dispatcher.Invoke(sort);
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -66,9 +61,7 @@ namespace BitrixScraperWpf
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource)
-                .SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
-            CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource).Refresh();
+            sort();
         }
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
@@ -102,16 +95,18 @@ namespace BitrixScraperWpf
             }
 
             this._controller.DeleteTask(task);
-            this.Dispatcher.Invoke(() =>
-            {
-                CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource)
-                    .SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
-                CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource).Refresh();
-            });
+            this.Dispatcher.Invoke(sort);
         }
 
         private void SortButton_Click(object sender, RoutedEventArgs e)
         {
+            sort();
+        }
+
+        private void sort()
+        {
+            CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource)
+                        .SortDescriptions.Add(new SortDescription("CustomStatus", ListSortDirection.Ascending));
             CollectionViewSource.GetDefaultView(this.TasksListView.ItemsSource).Refresh();
         }
     }
